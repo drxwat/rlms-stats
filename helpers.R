@@ -37,3 +37,5 @@ prepareData = function(data, wave, year, born_col, gender_col, salary_col, has_j
       year = year
     )
 }
+
+getPalette = colorRampPalette(RColorBrewer::brewer.pal(8, "Set1"))

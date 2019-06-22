@@ -187,12 +187,115 @@ ggplot(aes(x = year, y = mean), data = eloc_age_stats) +
 # ELEMENTARY OCCUPATIONS - WORKING HOURS
 #
 
-data_by_y_stats = data %>% 
-  filter(has_job == TRUE) %>% 
-  group_by(year, wave_n) %>% summarise(
-    mean = mean(whours),
-    sd = sd(whours),
-    median = median(whours),
-    iqr = IQR(whours)
+#eloc_whours_stats = eloc_data %>%
+#  group_by(year, wave_n) %>% summarise(
+#    mean = mean(whours, na.rm = TRUE),
+#    sd = sd(whours, na.rm = TRUE),
+#    median = median(whours, na.rm = TRUE),
+#    iqr = IQR(whours, na.rm = TRUE)
+#  )
+
+#ggplot(aes(x = year, y = mean), data = eloc_whours_stats) + geom_line()
+
+
+#
+# ELEMENTARY OCCUPATIONS - OCCUPATIONS
+#
+
+eloc_occ_by_y_total = eloc_data %>% group_by(year) %>% summarise(total = n())
+
+eloc_occ_freq = eloc_data %>% group_by(year, isco08code) %>% summarise(
+  n = n()
+) %>% arrange(year, desc(n))
+
+eloc_occ_freq = left_join(eloc_occ_freq, eloc_occ_by_y_total, by = 'year')
+eloc_occ_freq = eloc_occ_freq %>% mutate(freq = n/total)
+
+eloc_occ_freq_codes = eloc_occ_freq %>% filter(freq > 0.01) %>%
+  ungroup() %>% select(isco08code) %>% distinct()
+sort(c(eloc_occ_freq_codes$isco08code))
+
+eloc_occ_freq$isco08code_factor = factor(
+  eloc_occ_freq$isco08code, 
+  levels = c('9111', '9112', '9121', '9122', '9211', '9212', '9213', '9215', 
+             '9312', '9313', '9321', '9329', '9332', '9333', '9412', '9611',
+             '9613', '9621', '9623', '9629'),
+  labels = c(
+    'Domestic Cleaners and Helpers',
+    'Cleaners and Helpers in Offices, Hotels and Other Establishments',
+    'Hand Launderers and Pressers',
+    'Vehicle Cleaners',
+    'Crop Farm Labourers',
+    'Livestock Farm Labourers',
+    'Mixed Crop and Livestock Farm Labourers',
+    'Forestry Labourers',
+    'Civil Engineering Labourers',
+    'Building Construction Labourers',
+    'Hand Packers',
+    'Manufacturing Labourers Not Elsewhere Classified',
+    'Drivers of Animaldrawn Vehicles and Machinery',
+    'Freight Handlers',
+    'Kitchen Helpers',
+    'Garbage and Recycling Collectors',
+    'Sweepers and Related Labourers',
+    'Messengers, Package Deliverers and Luggage Porters',
+    'Meter Readers and Vending-machine Collectors',
+    'Elementary Workers Not Elsewhere Classified'
   )
+)
+eloc_occ_freq$isco08code_factor = replaceNaWithNamedFactor(eloc_occ_freq$isco08code_factor, 'Other')
+eloc_occ_freq_max_by_occ = eloc_occ_freq %>% group_by(isco08code_factor) %>% summarise(max_freq = max(freq))
+
+eloc_occ_freq = left_join(eloc_occ_freq, eloc_occ_freq_max_by_occ, by = 'isco08code_factor')
+eloc_occ_freq_popular = eloc_occ_freq %>% filter(
+    max_freq > 0.1 & 
+    isco08code_factor != 'Other' &
+    isco08code_factor != 'Elementary Workers Not Elsewhere Classified'
+  )
+
+ggplot(aes(x = year, y = freq, colour = isco08code_factor), data = eloc_occ_freq_popular) +
+  geom_smooth(size = 1, method = 'loess', se = FALSE) +
+  scale_color_brewer(name = 'Legend', palette="Set1") +
+  labs(title = 'Most popular elementary occupations dynamic. Russia 1994-2017.',
+       x = 'Year', y = 'Percentage in elementary occupations group') +
+  scale_x_continuous(breaks = seq(1994, 2017, 1))
+
+## Livestock Farm Labourers (9212) migration to other occupations
+
+livestock_workers_before = data %>% filter(isco08code == '9212' & year < 2007) %>% 
+  select(idind) %>% distinct() %>% mutate(was_lifestock_worker = TRUE)
+
+lw_data = left_join(data, livestock_workers_before, by = 'idind')
+ex_livestock_workers = lw_data %>% filter(year >= 2007 & was_lifestock_worker == TRUE & isco08code != '9212')
+
+livestock_workers_new_occ = ex_livestock_workers %>% group_by(isco08code) %>% 
+  summarise(n = n()) %>% arrange(desc(n)) %>% mutate(freq = n / nrow(ex_livestock_workers))
+
+livestock_workers_new_occ$isco08code
+
+livestock_workers_new_occ$isco08code_factor = factor(
+  livestock_workers_new_occ$isco08code,
+  levels = c('5153', '9112', '5321', '5223', '5414', '5120'),
+  labels = c('Building Caretakers',
+             'Cleaners and Helpers in Offices, Hotels and Other Establishments',
+             'Health Care Assistants',
+             'Shop Sales Assistants',
+             'Security Guards',
+             'Cooks'
+             )
+)
+livestock_workers_new_occ$isco08code_factor = replaceNaWithNamedFactor(livestock_workers_new_occ$isco08code_factor, 'Other')
+livestock_workers_new_occ_summ = livestock_workers_new_occ %>% group_by(isco08code_factor) %>% summarise(freq = sum(freq))
+
+ggplot(aes(x = '', y = freq, fill = isco08code_factor), data = livestock_workers_new_occ_summ) + 
+  geom_bar(width = 1, size = 1, color = "white", stat = "identity") +
+  coord_polar("y") +
+  geom_text(aes(label = paste0(round(livestock_workers_new_occ_summ$freq, 2) * 100, '%')), 
+            position = position_stack(vjust = 0.5)) +
+  labs(fill="Occupation ISCO-08", 
+       x=NULL, 
+       y=NULL, 
+       fill = NULL,
+       title="Livestock Farm Labourers most popular careers. Russia 1994-2017.")
+
   
