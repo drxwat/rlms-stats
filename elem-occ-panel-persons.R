@@ -109,19 +109,90 @@ for (wave_meta in waves_meta) {
 }
 remove(tmpData, wave_meta, data_sources, waves_meta, data_root, path, pattern)
 
-total_workers = data %>% group_by(year) %>% filter(has_job == TRUE) %>% 
+#
+# ELEMENTARY OCCUPATIONS - PERCENTAGE
+#
+data = data %>% mutate(age = year - born)
+
+# general data
+eloc_data = data %>% filter(has_job == TRUE & isco08major == '9')
+
+# calculating statistics
+total_workers = data %>% filter(has_job == TRUE) %>% group_by(year) %>% 
   summarise(workers_total = n())
 
-eloc_workers = data %>% group_by(year) %>% filter(has_job == TRUE & isco08major == '9') %>% 
+eloc_workers = eloc_data %>% group_by(year, wave_n) %>% 
   summarise(workers_eloc = n())
 
 eloc_workers_freq = full_join(total_workers, eloc_workers, by = 'year') %>% 
   mutate(eloc_2_total = workers_total / workers_eloc)
 
+# building LM to get coefs
+eloc_panel_lm = lm(eloc_2_total ~ wave_n, data = eloc_workers_freq)
+eloc_panel_lm_slope = round(summary(eloc_panel_lm)$coefficients[2] * 100, 2)
 
-ggplot(eloc_workers_freq, aes(year, eloc_2_total), size='qsec') + geom_line() +
-  geom_smooth(method = "lm")
+# percentage plot
+eloc_panel_labels = c(
+  'Elementary occupation fraction',
+  paste0('Linear model. Slope: ', eloc_panel_lm_slope, '%')
+  )
+
+ggplot(aes(x = year, y= eloc_2_total), data = eloc_workers_freq) + 
+  geom_point(aes(colour = eloc_panel_labels[1])) +
+  geom_line(size = 0.75) +
+  geom_smooth(method = "lm", aes(colour=eloc_panel_labels[2])) + 
+  scale_colour_manual(name = 'Legend',
+                      values = c("black", "blue"), 
+                      labels = c(eloc_panel_labels[1], eloc_panel_labels[2])) +
+  labs(title = 'Elementary occupations percentage. Russia 1994-2017.',
+       x = 'Year', y = 'Elementary occupations percentage') +
+  scale_x_continuous(breaks = seq(1994, 2017, 1))
+
+#
+# ELEMENTARY OCCUPATIONS - AGE
+#
+
+# calculating statistics
+eloc_age_stats = eloc_data %>% 
+  group_by(year, wave_n) %>% summarise(
+  mean = mean(age),
+  sd = sd(age),
+  median = median(age),
+  iqr = IQR(age)
+)
+
+# building LM to get coefs
+age_panel_lm = lm(age ~ wave_n, data = eloc_data)
+eloc_age_panel_lm_slope = round(summary(age_panel_lm)$coefficients[2], 2)
+
+eloc_age_panel_labels = c(
+  'Elementary occupation mean age',
+  paste0('Linear model. Slope: ', eloc_age_panel_lm_slope, '%')
+)
+
+ggplot(aes(x = year, y = mean), data = eloc_age_stats) + 
+  geom_line(aes(colour = eloc_age_panel_labels[1])) +
+  geom_pointrange(aes(ymin=mean - sd, ymax=mean + sd)) +
+  geom_smooth(aes(x = year, y = age, colour = eloc_age_panel_labels[2]), data = eloc_data, method = "lm") + 
+  ylim(18, 60) + 
+  labs(title = 'Elementary occupations mean age with standard deviation. Russia 1994-2017.', 
+       x = 'Year', y = 'Mean age (with SD)') +
+  scale_colour_manual(name = 'Legend',
+                      values = c("black", "blue"), 
+                      labels = c(eloc_age_panel_labels[1], eloc_age_panel_labels[2])) +
+  scale_x_continuous(breaks = seq(1994, 2017, 1))
 
 
+#
+# ELEMENTARY OCCUPATIONS - WORKING HOURS
+#
 
+data_by_y_stats = data %>% 
+  filter(has_job == TRUE) %>% 
+  group_by(year, wave_n) %>% summarise(
+    mean = mean(whours),
+    sd = sd(whours),
+    median = median(whours),
+    iqr = IQR(whours)
+  )
   
