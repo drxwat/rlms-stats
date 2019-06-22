@@ -9,9 +9,8 @@ replaceNaWithNamedFactor = function(factor_col, name) {
   return(new_factor_col)
 }
 
-# Birth year, salary, has job, job cod, gender, birthplace, 30 day working hours
-prepareData = function(data, wave, born_col, salary_col, has_job_col, job_code_col, gender_col, whours_col) {
-  wave_year = 1999 - wave
+# Birth year, salary, has job, job code, gender, birthplace, 30 day working hours
+prepareData = function(data, wave, year, born_col, gender_col, salary_col, has_job_col, job_code_col, whours_col) {
   born_col = enquo(born_col)
   salary_col = enquo(salary_col)
   has_job_col = enquo(has_job_col)
@@ -27,12 +26,14 @@ prepareData = function(data, wave, born_col, salary_col, has_job_col, job_code_c
     ) %>% 
     transmute(
       idind = idind,
-      age = wave_year - !! born_col,
+      born = !! born_col,
+      gender = factor(!! gender_col, levels = c(1, 2), c('Male', 'Female')),
       salary = ifelse(salary_int == 99999997 | salary_int == 99999998 | salary_int == 99999999, NA, salary_int),
       has_job = ifelse(has_job_int == 1 | has_job_int == 2 | has_job_int == 3 | has_job_int == 4, TRUE, FALSE),
       isco08code = as.character(!! job_code_col),
       isco08major = substring(isco08code, 1, 1),
-      gender = factor(!! gender_col, levels = c(1, 2), c('Male', 'Female')),
-      whours = ifelse(whours_int == 99999997 | whours_int == 99999998 | whours_int == 99999999, NA, whours_int)
+      whours = ifelse(whours_int == 99999997 | whours_int == 99999998 | whours_int == 99999999, NA, whours_int),
+      wave_n = wave,
+      year = year
     )
 }
