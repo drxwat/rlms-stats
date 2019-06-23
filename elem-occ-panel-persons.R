@@ -97,14 +97,8 @@ for (wave_meta in waves_meta) {
   print(paste0('Processing wave #', wave_meta$n))
   attributes(tmpData$idind) = NULL
   if (exists("data", inherits = FALSE)) {
-    #tmpData = tmpData %>% select(-c('born', 'gender'))
-    #wave_prefix_cols = paste(tail(colnames(tmpData), ncol(tmpData) - 1), wave_meta$n, sep = "_")
-    #colnames(tmpData) = c("idind", wave_prefix_cols)
-    #data = full_join(data, tmpData, by = 'idind')
     data = rbind(data, tmpData)
   } else {
-    #wave_prefix_cols = paste(tail(colnames(tmpData), ncol(tmpData) - 3), wave_meta$n, sep = "_")
-    #colnames(tmpData) = c('idind', 'born', 'gender', wave_prefix_cols)
     data = tmpData
   }
 }
@@ -140,15 +134,25 @@ eloc_panel_labels = c(
   )
 
 ggplot(aes(x = year, y= eloc_2_total), data = eloc_workers_freq) + 
-  geom_point(aes(colour = eloc_panel_labels[1])) +
-  geom_line(size = 0.75) +
+  geom_line(aes(colour = eloc_panel_labels[1]), size = 0.75) +
   geom_smooth(method = "lm", aes(colour=eloc_panel_labels[2])) + 
+  labs(title = 'Elementary Occupations Percentage. Russia 1994-2017.',
+       x = 'Year', y = 'Elementary occupations* dynamics',
+       caption = '* Classified by ISCO-08\n Source: https://github.com/drxwat/rlms-stats') +
+  scale_x_continuous(breaks = seq(1994, 2017, 5)) +
   scale_colour_manual(name = 'Legend',
-                      values = c("black", "blue"), 
+                      values = c("black", "#1f78b4"), 
                       labels = c(eloc_panel_labels[1], eloc_panel_labels[2])) +
-  labs(title = 'Elementary occupations percentage. Russia 1994-2017.',
-       x = 'Year', y = 'Elementary occupations percentage') +
-  scale_x_continuous(breaks = seq(1994, 2017, 1))
+  theme(
+    text = element_text(family = 'Roboto'),
+    plot.title = element_text(hjust = 0.5, face = 'bold', size = 13),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 8),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, color = 'black', linetype = "solid"),
+    axis.title = element_text(size = 13)
+  )
+
+  
 
 #
 # ELEMENTARY OCCUPATIONS - AGE
@@ -157,13 +161,16 @@ ggplot(eloc_data, aes(age, as.factor(year), fill='age')) +
   geom_density_ridges2(scale = 5) +
   theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
   scale_fill_brewer(palette="Paired", name = 'Legend') +
-  labs(title = 'Elementary occupations* age distribution. Russia 1994-2017.',
-       caption = '* classified by ISCO-08\n source: https://github.com/drxwat/rlms-stats',
+  labs(title = 'Elementary Occupations* Age Distribution. Russia 1994-2017.',
+       caption = '* Classified by ISCO-08\n Source: https://github.com/drxwat/rlms-stats',
        x = 'Age', y = 'Year') +
   theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.caption = element_text(hjust = 0, face = "italic", size = 8)
-    )
+    text = element_text(family = 'Roboto'),
+    plot.title = element_text(hjust = 0.5, face = 'bold', size = 13),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 8),
+    panel.background = element_blank(),
+    axis.title = element_text(size = 13)
+  )
 
 #
 # Major isco-08 categories dynamics
@@ -177,30 +184,52 @@ major_code_by_year = major_data %>% filter(!is.na(isco08major)) %>% group_by(yea
 )
 major_code_by_year = left_join(major_code_by_year, major_code_total, by = 'year') %>% mutate(
   freq = n / total
+) %>% ungroup()
+
+major_code_by_year$isco08major_factor = factor(
+  major_code_by_year$isco08major,
+  levels = c(seq(0,9)),
+  labels = c(
+    'Armed Forces Occupations',
+    'Managers',
+    'Professionals',
+    'Technicians Professionals',
+    'Clerical Support Workers',
+    'Services and Sales Workers',
+    'Skilled Agricultural Workers',
+    'Craft and Related Trades Workers',
+    'Plant and Machine Operators',
+    'Elementary occupations'
+  )
 )
-ggplot(major_code_by_year, aes(year, freq, fill=isco08major, color=isco08major)) + 
+
+major_code_by_year_ordered = major_code_by_year %>% filter(year == last(year)) %>% arrange(desc(freq))
+
+major_code_by_year$isco08major_factor = factor(
+  major_code_by_year$isco08major_factor,
+  levels = major_code_by_year_ordered$isco08major_factor
+)
+
+ggplot(major_code_by_year, aes(year, freq, color=isco08major_factor)) + 
   geom_line(size = 1) +
+  labs(title = 'Major Occupations Groups* Dynamics. Russia 1994-2017.',
+       caption = '* Classified by ISCO-08\n Source: https://github.com/drxwat/rlms-stats',
+       x = 'Year', y = 'Occupation Perecntage') +
   scale_color_brewer(palette="Paired", name = 'Legend') +
-  labs(title = 'Elementary occupations* age distribution. Russia 1994-2017.',
-       caption = '* classified by ISCO-08\n source: https://github.com/drxwat/rlms-stats',
-       x = 'Age', y = 'Year') +
   theme(
-    plot.title = element_text(hjust = 0.5),
+    text = element_text(family = 'Roboto'),
+    plot.title = element_text(hjust = 0.5, face = 'bold', size = 13),
     plot.caption = element_text(hjust = 0, face = "italic", size = 8),
-    title = element_text(face = 'bold'),
     panel.background = element_blank(),
-    axis.line = element_line(size = 0.5, color = 'black', linetype = "solid")
+    axis.line = element_line(size = 0.5, color = 'black', linetype = "solid"),
+    axis.title = element_text(size = 13)
   ) +
-  scale_x_continuous(breaks = seq(1994, 2017, 1), expand = c(0,0)) + 
-  scale_y_continuous(expand = c(0,0))
+  scale_x_continuous(
+    breaks = seq(1994, 2017, 5), 
+    limits = c(1994, 2017), 
+    expand = expand_scale(mult = c(0.06,0))
+  )
 
-
-###
-###
-###
-ggplot(major_code_by_year %>% filter(isco08major == '9'), aes(year, freq)) + 
-  geom_line() +
-  scale_color_brewer(palette="Paired", name = 'Legend')
 #
 # ELEMENTARY OCCUPATIONS - SALLARY NORMALIZED DISTRIBUTION (geom_density_ridges)
 #
@@ -231,7 +260,7 @@ eloc_occ_freq$isco08code_factor = factor(
              '9613', '9621', '9623', '9629'),
   labels = c(
     'Domestic Cleaners and Helpers',
-    'Cleaners and Helpers in Offices, Hotels and Other Establishments',
+    'Cleaners and Helpers in Offices',
     'Hand Launderers and Pressers',
     'Vehicle Cleaners',
     'Crop Farm Labourers',
@@ -264,10 +293,23 @@ eloc_occ_freq_popular = eloc_occ_freq %>% filter(
 
 ggplot(aes(x = year, y = freq, colour = isco08code_factor), data = eloc_occ_freq_popular) +
   geom_smooth(size = 1, method = 'loess', se = FALSE) +
-  scale_color_brewer(name = 'Legend', palette="Set1") +
-  labs(title = 'Most popular elementary occupations dynamic. Russia 1994-2017.',
+  labs(title = 'Most Popular* Elementary Occupations** Dynamics Approx*** Russia 1994-2017.',
+       caption = '* Had at leat 10% in group\n ** Classified by ISCO-08\n *** Used loess fn to get smooth lines \n Source: https://github.com/drxwat/rlms-stats',
        x = 'Year', y = 'Percentage in elementary occupations group') +
-  scale_x_continuous(breaks = seq(1994, 2017, 1))
+  scale_color_brewer(palette="Paired", name = 'Legend') +
+  theme(
+    text = element_text(family = 'Roboto'),
+    plot.title = element_text(hjust = 0.5, face = 'bold', size = 13),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 8),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, color = 'black', linetype = "solid"),
+    axis.title = element_text(size = 13)
+  ) +
+  scale_x_continuous(
+    breaks = seq(1994, 2017, 5), 
+    limits = c(1994, 2017), 
+    expand = expand_scale(mult = c(0.06,0))
+  )
 
 ## Livestock Farm Labourers (9212) migration to other occupations
 
@@ -286,7 +328,7 @@ livestock_workers_new_occ$isco08code_factor = factor(
   livestock_workers_new_occ$isco08code,
   levels = c('5153', '9112', '5321', '5223', '5414', '5120'),
   labels = c('Building Caretakers',
-             'Cleaners and Helpers in Offices, Hotels and Other Establishments',
+             'Cleaners and Helpers in Offices',
              'Health Care Assistants',
              'Shop Sales Assistants',
              'Security Guards',
@@ -295,17 +337,21 @@ livestock_workers_new_occ$isco08code_factor = factor(
 )
 livestock_workers_new_occ$isco08code_factor = replaceNaWithNamedFactor(livestock_workers_new_occ$isco08code_factor, 'Other')
 livestock_workers_new_occ_summ = livestock_workers_new_occ %>% group_by(isco08code_factor) %>% summarise(freq = sum(freq))
+ggplot(aes(x = '', y = freq, fill = isco08code_factor), data = livestock_workers_new_occ_summ %>% filter(isco08code_factor != 'Other')) + 
+  geom_bar(width = 1, stat = "identity", position = "dodge") +
+  
+  labs(title = 'Livestock Farm Labourers Popular Careers After 2007. Russia 1994-2017.',
+       caption = 'Source: https://github.com/drxwat/rlms-stats',
+       y = 'Percentage in new careers', x = NULL) +
+  scale_fill_brewer(palette="Paired", name = 'Legend') +
+  theme(
+    text = element_text(family = 'Roboto'),
+    plot.title = element_text(hjust = 0.5, face = 'bold', size = 13),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 8),
+    panel.background = element_blank(),
+    axis.title = element_text(size = 13)
+  )
 
-ggplot(aes(x = '', y = freq, fill = isco08code_factor), data = livestock_workers_new_occ_summ) + 
-  geom_bar(width = 1, size = 1, color = "white", stat = "identity") +
-  coord_polar("y") +
-  geom_text(aes(label = paste0(round(livestock_workers_new_occ_summ$freq, 2) * 100, '%')), 
-            position = position_stack(vjust = 0.5)) +
-  labs(fill="Occupation ISCO-08", 
-       x=NULL, 
-       y=NULL, 
-       fill = NULL,
-       title="Livestock Farm Labourers most popular careers. Russia 1994-2017.")
 
 
   
