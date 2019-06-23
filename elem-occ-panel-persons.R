@@ -3,6 +3,7 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 library(fs)
+library(ggridges)
 
 setwd('~/stats/rlms-stats/')
 source("helpers.R")
@@ -119,13 +120,14 @@ eloc_data = data %>% filter(has_job == TRUE & isco08major == '9')
 
 # calculating statistics
 total_workers = data %>% filter(has_job == TRUE) %>% group_by(year) %>% 
-  summarise(workers_total = n())
+  summarise(workers_total = n()
+)
 
 eloc_workers = eloc_data %>% group_by(year, wave_n) %>% 
   summarise(workers_eloc = n())
 
-eloc_workers_freq = full_join(total_workers, eloc_workers, by = 'year') %>% 
-  mutate(eloc_2_total = workers_total / workers_eloc)
+eloc_workers_freq = left_join(total_workers, eloc_workers, by = 'year') %>% 
+  mutate(eloc_2_total = (workers_eloc/ workers_total) * 100)
 
 # building LM to get coefs
 eloc_panel_lm = lm(eloc_2_total ~ wave_n, data = eloc_workers_freq)
@@ -150,52 +152,59 @@ ggplot(aes(x = year, y= eloc_2_total), data = eloc_workers_freq) +
 
 #
 # ELEMENTARY OCCUPATIONS - AGE
-#
+#  Paired
+ggplot(eloc_data, aes(age, as.factor(year), fill='age')) + 
+  geom_density_ridges2(scale = 5) +
+  theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
+  scale_fill_brewer(palette="Paired", name = 'Legend') +
+  labs(title = 'Elementary occupations* age distribution. Russia 1994-2017.',
+       caption = '* classified by ISCO-08\n source: https://github.com/drxwat/rlms-stats',
+       x = 'Age', y = 'Year') +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 8)
+    )
 
-# calculating statistics
-eloc_age_stats = eloc_data %>% 
-  group_by(year, wave_n) %>% summarise(
-  mean = mean(age),
-  sd = sd(age),
-  median = median(age),
-  iqr = IQR(age)
+#
+# Major isco-08 categories dynamics
+#
+major_data = data %>% filter(has_job == TRUE)
+major_code_total = major_data %>% filter(!is.na(isco08major)) %>% group_by(year) %>% summarise(
+  total = n()
 )
-
-# building LM to get coefs
-age_panel_lm = lm(age ~ wave_n, data = eloc_data)
-eloc_age_panel_lm_slope = round(summary(age_panel_lm)$coefficients[2], 2)
-
-eloc_age_panel_labels = c(
-  'Elementary occupation mean age',
-  paste0('Linear model. Slope: ', eloc_age_panel_lm_slope, '%')
+major_code_by_year = major_data %>% filter(!is.na(isco08major)) %>% group_by(year, isco08major) %>% summarise(
+  n = n()
 )
+major_code_by_year = left_join(major_code_by_year, major_code_total, by = 'year') %>% mutate(
+  freq = n / total
+)
+ggplot(major_code_by_year, aes(year, freq, fill=isco08major, color=isco08major)) + 
+  geom_line(size = 1) +
+  scale_color_brewer(palette="Paired", name = 'Legend') +
+  labs(title = 'Elementary occupations* age distribution. Russia 1994-2017.',
+       caption = '* classified by ISCO-08\n source: https://github.com/drxwat/rlms-stats',
+       x = 'Age', y = 'Year') +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0, face = "italic", size = 8),
+    title = element_text(face = 'bold'),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, color = 'black', linetype = "solid")
+  ) +
+  scale_x_continuous(breaks = seq(1994, 2017, 1), expand = c(0,0)) + 
+  scale_y_continuous(expand = c(0,0))
 
-ggplot(aes(x = year, y = mean), data = eloc_age_stats) + 
-  geom_line(aes(colour = eloc_age_panel_labels[1])) +
-  geom_pointrange(aes(ymin=mean - sd, ymax=mean + sd)) +
-  geom_smooth(aes(x = year, y = age, colour = eloc_age_panel_labels[2]), data = eloc_data, method = "lm") + 
-  ylim(18, 60) + 
-  labs(title = 'Elementary occupations mean age with standard deviation. Russia 1994-2017.', 
-       x = 'Year', y = 'Mean age (with SD)') +
-  scale_colour_manual(name = 'Legend',
-                      values = c("black", "blue"), 
-                      labels = c(eloc_age_panel_labels[1], eloc_age_panel_labels[2])) +
-  scale_x_continuous(breaks = seq(1994, 2017, 1))
 
-
+###
+###
+###
+ggplot(major_code_by_year %>% filter(isco08major == '9'), aes(year, freq)) + 
+  geom_line() +
+  scale_color_brewer(palette="Paired", name = 'Legend')
 #
-# ELEMENTARY OCCUPATIONS - WORKING HOURS
+# ELEMENTARY OCCUPATIONS - SALLARY NORMALIZED DISTRIBUTION (geom_density_ridges)
 #
 
-#eloc_whours_stats = eloc_data %>%
-#  group_by(year, wave_n) %>% summarise(
-#    mean = mean(whours, na.rm = TRUE),
-#    sd = sd(whours, na.rm = TRUE),
-#    median = median(whours, na.rm = TRUE),
-#    iqr = IQR(whours, na.rm = TRUE)
-#  )
-
-#ggplot(aes(x = year, y = mean), data = eloc_whours_stats) + geom_line()
 
 
 #
@@ -297,5 +306,6 @@ ggplot(aes(x = '', y = freq, fill = isco08code_factor), data = livestock_workers
        y=NULL, 
        fill = NULL,
        title="Livestock Farm Labourers most popular careers. Russia 1994-2017.")
+
 
   
