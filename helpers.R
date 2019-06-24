@@ -10,19 +10,21 @@ replaceNaWithNamedFactor = function(factor_col, name) {
 }
 
 # Birth year, salary, has job, job code, gender, birthplace, 30 day working hours
-prepareData = function(data, wave, year, born_col, gender_col, salary_col, has_job_col, job_code_col, whours_col) {
+prepareData = function(data, wave, year, born_col, gender_col, salary_col, has_job_col, job_code_col, whours_col, region_col) {
   born_col = enquo(born_col)
   salary_col = enquo(salary_col)
   has_job_col = enquo(has_job_col)
   job_code_col = enquo(job_code_col)
   gender_col = enquo(gender_col)
   whours_col = enquo(whours_col)
+  region_col = enquo(region_col)
   
   data %>% 
     mutate(
       salary_int = as.integer(!! salary_col),
       has_job_int = as.integer(!! has_job_col),
-      whours_int = as.integer( !! whours_col)
+      whours_int = as.integer( !! whours_col),
+      region_int = as.integer(!! region_col)
     ) %>% 
     transmute(
       idind = idind,
@@ -34,7 +36,8 @@ prepareData = function(data, wave, year, born_col, gender_col, salary_col, has_j
       isco08major = substring(isco08code, 1, 1),
       whours = ifelse(whours_int == 99999997 | whours_int == 99999998 | whours_int == 99999999, NA, whours_int),
       wave_n = wave,
-      year = year
+      year = year,
+      region = region_int
     )
 }
 

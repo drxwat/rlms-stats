@@ -23,70 +23,70 @@ data_sources = dir_info(data_root, recurse = TRUE) %>%
 
 waves_meta = list(
   list(n = 5, yaer = 1994, born = quo(a_born_y), gender = quo(ah5), salary = quo(aj10), 
-       has_job = quo(aj1),job_code = quo(aj2cod08), whours = quo(aj8)),
+       has_job = quo(aj1),job_code = quo(aj2cod08), whours = quo(aj8), region = quo(region)),
   
   list(n = 6, yaer = 1995, born = quo(b_born_y), gender = quo(bh5), salary = quo(bj10), 
-       has_job = quo(bj1), job_code = quo(bj2cod08), whours = quo(bj8)),
+       has_job = quo(bj1), job_code = quo(bj2cod08), whours = quo(bj8), region = quo(region)),
   
   list(n = 7, yaer = 1996, born = quo(c_born_y), gender = quo(ch5), salary = quo(cj10), 
-       has_job = quo(cj1), job_code = quo(cj2cod08), whours = quo(cj8)),
+       has_job = quo(cj1), job_code = quo(cj2cod08), whours = quo(cj8), region = quo(region)),
   
   list(n = 8, yaer = 1998, born = quo(d_born_y), gender = quo(dh5), salary = quo(dj10), 
-       has_job = quo(dj1), job_code = quo(dj2cod08), whours = quo(dj8)),
+       has_job = quo(dj1), job_code = quo(dj2cod08), whours = quo(dj8), region = quo(region)),
   
   list(n = 9, yaer = 2000, born = quo(e_born_y), gender = quo(eh5), salary = quo(ej10), 
-       has_job = quo(ej1), job_code = quo(ej2cod08), whours = quo(ej8)),
+       has_job = quo(ej1), job_code = quo(ej2cod08), whours = quo(ej8), region = quo(region)),
   
   list(n = 10, yaer = 2001, born = quo(f_born_y), gender = quo(fh5), salary = quo(fj10), 
-       has_job = quo(fj1), job_code = quo(fj2cod08), whours = quo(fj8)),
+       has_job = quo(fj1), job_code = quo(fj2cod08), whours = quo(fj8), region = quo(region)),
   
   list(n = 11, yaer = 2002, born = quo(g_born_y), gender = quo(gh5), salary = quo(gj10), 
-       has_job = quo(gj1), job_code = quo(gj2cod08), whours = quo(gj8)),
+       has_job = quo(gj1), job_code = quo(gj2cod08), whours = quo(gj8), region = quo(region)),
   
   list(n = 12, yaer = 2003, born = quo(h_born_y), gender = quo(hh5), salary = quo(hj10), 
-       has_job = quo(hj1), job_code = quo(hj2cod08), whours = quo(hj8)),
+       has_job = quo(hj1), job_code = quo(hj2cod08), whours = quo(hj8), region = quo(region)),
   
   list(n = 13, yaer = 2004, born = quo(i_born_y), gender = quo(ih5), salary = quo(ij10), 
-       has_job = quo(ij1), job_code = quo(ij2cod08), whours = quo(ij8)),
+       has_job = quo(ij1), job_code = quo(ij2cod08), whours = quo(ij8), region = quo(region)),
   
   list(n = 14, yaer = 2005, born = quo(j_born_y), gender = quo(jh5), salary = quo(jj10), 
-       has_job = quo(jj1), job_code = quo(jj2cod08), whours = quo(jj8)),
+       has_job = quo(jj1), job_code = quo(jj2cod08), whours = quo(jj8), region = quo(region)),
   
   list(n = 15, yaer = 2006, born = quo(k_born_y), gender = quo(kh5), salary = quo(kj10), 
-       has_job = quo(kj1), job_code = quo(kj2cod08), whours = quo(kj8)),
+       has_job = quo(kj1), job_code = quo(kj2cod08), whours = quo(kj8), region = quo(region)),
   
   list(n = 16, yaer = 2007, born = quo(l_born_y), gender = quo(lh5), salary = quo(lj10), 
-       has_job = quo(lj1), job_code = quo(lj2cod08), whours = quo(lj8)),
+       has_job = quo(lj1), job_code = quo(lj2cod08), whours = quo(lj8), region = quo(region)),
   
   list(n = 17, yaer = 2008, born = quo(m_born_y), gender = quo(mh5), salary = quo(mj10), 
-       has_job = quo(mj1), job_code = quo(mj2cod08), whours = quo(mj8)),
+       has_job = quo(mj1), job_code = quo(mj2cod08), whours = quo(mj8), region = quo(region)),
   
   list(n = 18, yaer = 2009, born = quo(n_born_y), gender = quo(nh5), salary = quo(nj10), 
-       has_job = quo(nj1), job_code = quo(nj2cod08), whours = quo(nj8)),
+       has_job = quo(nj1), job_code = quo(nj2cod08), whours = quo(nj8), region = quo(region)),
   
   list(n = 19, yaer = 2010, born = quo(oh6), gender = quo(oh5), salary = quo(oj10), 
-       has_job = quo(oj1), job_code = quo(oj2cod08), whours = quo(oj8)),
+       has_job = quo(oj1), job_code = quo(oj2cod08), whours = quo(oj8), region = quo(region)),
 
   list(n = 20, yaer = 2011, born = quo(ph6), gender = quo(ph5), salary = quo(pj10), 
-       has_job = quo(pj1), job_code = quo(pj2cod08), whours = quo(pj8)),
+       has_job = quo(pj1), job_code = quo(pj2cod08), whours = quo(pj8), region = quo(region)),
   
   list(n = 21, yaer = 2012, born = quo(qh6), gender = quo(qh5), salary = quo(qj10), 
-       has_job = quo(qj1), job_code = quo(qj2cod08), whours = quo(qj8)),
+       has_job = quo(qj1), job_code = quo(qj2cod08), whours = quo(qj8), region = quo(region)),
   
   list(n = 22, yaer = 2013, born = quo(rh6), gender = quo(rh5), salary = quo(rj10), 
-       has_job = quo(rj1), job_code = quo(rj2cod08), whours = quo(rj8)),
+       has_job = quo(rj1), job_code = quo(rj2cod08), whours = quo(rj8), region = quo(region)),
   
   list(n = 23, yaer = 2014, born = quo(sh6), gender = quo(sh5), salary = quo(sj10), 
-       has_job = quo(sj1), job_code = quo(sj2cod08), whours = quo(sj8)),
+       has_job = quo(sj1), job_code = quo(sj2cod08), whours = quo(sj8), region = quo(region)),
   
   list(n = 24, yaer = 2015, born = quo(th6), gender = quo(th5), salary = quo(tj10), 
-       has_job = quo(tj1), job_code = quo(tj2cod08), whours = quo(tj8)),
+       has_job = quo(tj1), job_code = quo(tj2cod08), whours = quo(tj8), region = quo(region)),
 
   list(n = 25, yaer = 2016, born = quo(uh6), gender = quo(uh5), salary = quo(uj10), 
-       has_job = quo(uj1), job_code = quo(uj2cod08), whours = quo(uj8)),
+       has_job = quo(uj1), job_code = quo(uj2cod08), whours = quo(uj8), region = quo(region)),
   
   list(n = 26, yaer = 2017, born = quo(vh6), gender = quo(vh5),  salary = quo(vj13.2), 
-       has_job = quo(vj1), job_code = quo(vj2cod08), whours = quo(vj8))
+       has_job = quo(vj1), job_code = quo(vj2cod08), whours = quo(vj8), region = quo(region))
 )
 
 for (wave_meta in waves_meta) {
@@ -94,7 +94,7 @@ for (wave_meta in waves_meta) {
   tmpData = prepareData(
     read_sav(path), wave_meta$n, wave_meta$yaer,
     !!wave_meta$born, !!wave_meta$gender, !!wave_meta$salary, !!wave_meta$has_job, 
-    !!wave_meta$job_code, !!wave_meta$whours
+    !!wave_meta$job_code, !!wave_meta$whours, !!wave_meta$region
     )
   print(paste0('Processing wave #', wave_meta$n))
   attributes(tmpData$idind) = NULL
@@ -422,10 +422,8 @@ ggarrange(eloc_male_last, eloc_female_last, ncol = 2, nrow = 1, legend="bottom")
 # ELEMENTARY OCCUPATIONS - SALARY SUBGROUPS
 #
 
-eloc_data_popular = eloc_data
-
-eloc_data_popular$isco08code_factor = factor(
-  eloc_data_popular$isco08code, 
+eloc_last_year$isco08code_factor = factor(
+  eloc_last_year$isco08code, 
   levels = c('9112', '9321', '9333', '9613'),
   labels = c(
     'Cleaners and Helpers in Offices',
@@ -444,12 +442,12 @@ common_theme = theme(
     axis.text = element_text(size = 11, colour = 'black')
   )
 
-eloc_data_popular$isco08code_factor = replaceNaWithNamedFactor(eloc_data_popular$isco08code_factor, 'Other')
+eloc_last_year$isco08code_factor = replaceNaWithNamedFactor(eloc_last_year$isco08code_factor, 'Other')
 
-eloc_data_popular = eloc_data_popular %>% filter(salary <= 50000)
+eloc_last_year = eloc_last_year %>% filter(salary <= 50000)
 eloc_pop1 =  ggplot(mapping = aes(x = salary, y=..count..)) + 
-  geom_density(data = eloc_data_popular) +
-  geom_density(data = eloc_data_popular %>% filter(isco08code_factor == 'Cleaners and Helpers in Offices'), aes(fill=isco08code_factor), alpha = 0.9) +
+  geom_density(data = eloc_last_year) +
+  geom_density(data = eloc_last_year %>% filter(isco08code_factor == 'Cleaners and Helpers in Offices'), aes(fill=isco08code_factor), alpha = 0.9) +
   scale_fill_manual(name = '', values = c('#a6cee3')) +
   labs(
     title = 'Elementary Occupations* Most popular**. Russia 2017',
@@ -457,15 +455,15 @@ eloc_pop1 =  ggplot(mapping = aes(x = salary, y=..count..)) +
   common_theme
 
 eloc_pop2 = ggplot(mapping = aes(x = salary, y=..count..)) + 
-  geom_density(data = eloc_data_popular) +
-  geom_density(data = eloc_data_popular %>% filter(isco08code_factor == 'Freight Handlers'), aes(fill=isco08code_factor), alpha = 0.9) +
+  geom_density(data = eloc_last_year) +
+  geom_density(data = eloc_last_year %>% filter(isco08code_factor == 'Freight Handlers'), aes(fill=isco08code_factor), alpha = 0.9) +
   scale_fill_manual(name = '', values = c('#1f78b4')) +
   labs(x = 'RUB', y = NULL) +
   common_theme
 
 eloc_pop3 = ggplot(mapping = aes(x = salary, y=..count..)) + 
-  geom_density(data = eloc_data_popular) +
-  geom_density(data = eloc_data_popular %>% filter(isco08code_factor == 'Hand Packers'), aes(fill=isco08code_factor), alpha = 0.9) +
+  geom_density(data = eloc_last_year) +
+  geom_density(data = eloc_last_year %>% filter(isco08code_factor == 'Hand Packers'), aes(fill=isco08code_factor), alpha = 0.9) +
   scale_fill_manual(name = '', values = c('#33a02c')) +
   labs(
     caption = '* Classified by ISCO-08\n **More then 5% in group \n Source: https://github.com/drxwat/rlms-stats',
@@ -473,8 +471,8 @@ eloc_pop3 = ggplot(mapping = aes(x = salary, y=..count..)) +
   common_theme
 
 eloc_pop4 = ggplot(mapping = aes(x = salary, y=..count..)) + 
-  geom_density(data = eloc_data_popular) +
-  geom_density(data = eloc_data_popular %>% filter(isco08code_factor == 'Sweepers and Related Labourers'), aes(fill=isco08code_factor), alpha = 0.9) +
+  geom_density(data = eloc_last_year) +
+  geom_density(data = eloc_last_year %>% filter(isco08code_factor == 'Sweepers and Related Labourers'), aes(fill=isco08code_factor), alpha = 0.9) +
   scale_fill_manual(name = '', values = c('#e31a1c')) +
   labs(x = 'RUB', y = NULL, caption = '\n\n') +
   common_theme
@@ -485,5 +483,29 @@ ggarrange(eloc_pop1, eloc_pop2, eloc_pop3, eloc_pop4, ncol = 2, nrow = 2, legend
 #
 # ELEMENTARY OCCUPATIONS - SALARY REGIONS
 #
+
+eloc_last_year = eloc_last_year %>% mutate(
+  is_center = ifelse(region == 1 | region == 142 | region == 141 | region == 138, TRUE, FALSE)
+)
+eloc_cent1 = ggplot(mapping = aes(x = salary, y=..count..)) + 
+  geom_density(data = eloc_last_year) +
+  geom_density(data = eloc_last_year %>% filter(is_center == TRUE), aes(fill = 'MSK & SPB'), alpha = 0.9) +
+  scale_fill_manual(name = '', values = c('#e31a1c')) +
+  labs(title = 'Elementary Occupations* Regions. Russia 2017', 
+       caption = '* Classified by ISCO-08\n Source: https://github.com/drxwat/rlms-stats',
+       x = 'RUB', y = NULL) +
+  common_theme
+
+eloc_cent2 = ggplot(mapping = aes(x = salary, y=..count..)) + 
+  geom_density(data = eloc_last_year) +
+  geom_density(data = eloc_last_year %>% filter(is_center == FALSE), aes(fill = 'Periphery'), alpha = 0.9) +
+  scale_fill_manual(name = '', values = c('#33a02c')) +
+  labs(
+    x = 'RUB', y = NULL, 
+    caption = '\n'
+  ) +
+  common_theme
+
+ggarrange(eloc_cent1, eloc_cent2, ncol = 2, legend="bottom")
 
 
